@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 
 public class NhanVatCrawler {
     public void crawl() {
@@ -122,6 +125,11 @@ public class NhanVatCrawler {
             }
         }
 
+        Collections.sort(nhanVatList, new Comparator<NhanVatModel>() {
+            public int compare(NhanVatModel nv1, NhanVatModel nv2) {
+                return nv1.getCode().compareTo(nv2.getCode());
+            }
+        });
         
         // Write to JSON file
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
