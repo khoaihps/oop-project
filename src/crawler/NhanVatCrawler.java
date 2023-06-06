@@ -137,14 +137,14 @@ public class NhanVatCrawler {
         String json = gson.toJson(nhanVatList);
 
         // Specify the file path and name
-        String filePath = "./database/NhatVat.json";
+        String filePath = "./database/NhanVat.json";
 
         try (FileWriter writer = new FileWriter(filePath)) {
             // Write the JSON string to the file
             writer.write(json);
         } catch (IOException e) {
             e.printStackTrace();
-}
+        }
     }
 
     public static void main(String[] args) {
