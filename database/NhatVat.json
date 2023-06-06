@@ -1,0 +1,87 @@
+[
+  {
+    "code": "/nhan-vat/vuong-hong-sen",
+    "birth": [
+      "27 tháng 9 năm 1902",
+      "Sóc Trăng"
+    ],
+    "death": [
+      "9 tháng 12, 1996 (94 tuổi)",
+      "Thành phố Hồ Chí Minh"
+    ],
+    "table": [
+      {
+        "label": "Công việc",
+        "info": [
+          "Nhà văn, nhà sưu tập, nhà khảo cứu"
+        ]
+      }
+    ],
+    "description": [
+      "Vương Hồng Sển (1902-1996), bút hiệu Anh Vương, Vân Đường, Đạt Cổ Trai, là một nhà văn hóa, học giả, nhà sưu tập đồ cổ nổi tiếng. Ông được xem là người có hiểu biết sâu rộng về miền Nam và rất được kính trọng trong giới sử học và khảo cổ ở Việt Nam. Khi chết ông đã hiến tặng ngôi nhà (Vân đường phủ) và toàn bộ sưu tập đồ cổ của mình cho Nhà nước Việt Nam (tổng cộng 849 cổ vật khác nhau) với hy vọng thành lập một bảo tàng mang tên ông. Năm 2003, Ủy ban Nhân dân Thành phố Hồ Chí Minh ra quyết định xếp hạng di tích lịch sử cấp thành phố ngôi nhà này (địa chỉ: số 9/1 đường Nguyễn Thiện Thuật, phường 14, Quận Bình Thạnh)."
+    ],
+    "relatives": [
+      {
+        "text": "Nguyễn Thiện Thuật",
+        "href": "/nhan-vat/nguyen-thien-thuat"
+      },
+      {
+        "text": "Nhà nước Việt Nam",
+        "href": "/nhan-vat/nha-nuoc-viet-nam"
+      },
+      {
+        "text": "Hồ Chí Minh",
+        "href": "/nhan-vat/ho-chi-minh"
+      },
+      {
+        "text": "nước Việt",
+        "href": "/dia-danh/nuoc-viet"
+      },
+      {
+        "text": "tỉnh Quảng Đông",
+        "href": "/dia-danh/tinh-quang-dong"
+      },
+      {
+        "text": "Lê Quý Đôn",
+        "href": "/nhan-vat/le-quy-don"
+      }
+    ],
+    "name": "Vương Hồng Sển"
+  },
+  {
+    "code": "/nhan-vat/vuong-thua-vu",
+    "birth": [],
+    "death": [],
+    "table": [],
+    "description": [
+      "Trung tướng Vương Thừa Vũ (tên thật là Nguyễn Văn Đồi, sinh năm 1910 tại làng Vĩnh Ninh, xã Vĩnh Quỳnh, huyện Thanh Trì, thành phố Hà Nội - mất năm 1980) là một trung tướng Quân đội Nhân dân Việt Nam. Vương Thừa Vũ là một vị tướng, một nhà lãnh đạo, chỉ huy có tài của Quân đội nhân dân Việt Nam. Ông có nhiều đóng góp cho sự nghiệp giải phóng đất nước, giải phóng Thủ đô.1 2 Ông là chỉ huy trưởng mặt trận Hà Nội năm 1946 khi toàn quốc kháng chiến nổ ra. Ông cũng là Đại đoàn trưởng kiêm Chính uỷ đầu tiên của Đại đoàn 308, đại đoàn chủ lực đầu tiên của Quân đội Nhân dân Việt Nam (nay là Sư đoàn 308 Quân Tiên Phong, Quân đoàn I)."
+    ],
+    "relatives": [
+      {
+        "text": "huyện Thanh Trì",
+        "href": "/dia-danh/huyen-thanh-tri"
+      },
+      {
+        "text": "thành phố Hà Nội",
+        "href": "/dia-danh/thanh-pho-ha-noi"
+      },
+      {
+        "text": "Điện Biên Phủ",
+        "href": "/dia-danh/dien-bien-phu"
+      },
+      {
+        "text": "Hồ Chí Minh",
+        "href": "/nhan-vat/ho-chi-minh"
+      },
+      {
+        "text": "tỉnh Hà Đông",
+        "href": "/dia-danh/tinh-ha-dong"
+      },
+      {
+        "text": "Nguyễn Ái Quốc",
+        "href": "/nhan-vat/nguyen-ai-quoc"
+      }
+    ],
+    "name": "Vương Thừa Vũ"
+  }
+]
