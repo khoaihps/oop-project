@@ -26,7 +26,6 @@ import java.util.Comparator;
 
 public class NhanVatCrawler {
 
-    void 
     public void crawlNguoiKeSu() {
         String baseUrl = "https://nguoikesu.com";
         String nhanVatUrl = "/nhan-vat/an-duong-vuong";
@@ -154,8 +153,9 @@ public class NhanVatCrawler {
 
     public void crawlWiki()  {
         String filePath = "./database/NhanVat.json";
-        ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
 
+        //  Input from JSON back to Objects
+        ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
         try (FileReader reader = new FileReader(filePath);
              BufferedReader bufferedReader = new BufferedReader(reader)) {
 
@@ -173,24 +173,72 @@ public class NhanVatCrawler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-                    
-        String baseUrl = "https://vi.wikipedia.org/wiki/";
-        String nhanVatUrl = "";
-        Document doc;
-
-        // Process the deserialized ArrayList<NhanVatModel> as needed
+            
         for (NhanVatModel nhanVat : nhanVatList) {
-            nhanVatUrl = nhanVat.getName().replace(" ", "_");
-            try {
-                doc =  Jsoup.connect(baseUrl+nhanVatUrl).get();
-            } catch (IOException e ){
-                throw new RuntimeException(e);
-            }
+            System.out.println(nhanVat.toString() + '\n');
         }
+
+        // String baseUrl = "https://vi.wikipedia.org/wiki/";
+        // String nhanVatUrl = "";
+        // Document doc;
+
+
+        // for (NhanVatModel nhanVat : nhanVatList) {
+        //     nhanVatUrl = nhanVat.getName().replace(" ", "_");
+        //     try {
+        //         doc =  Jsoup.connect(baseUrl+nhanVatUrl).get();
+        //     } catch (IOException e ){
+        //         throw new RuntimeException(e);
+        //     }
+        //     Element table = doc.selectFirst("div.infobox:not([id])");
+        //     if (table != null) {
+        //         System.out.println("HTML contains infobox without id attribute");
+        //     } else {
+        //         System.out.println("HTML does not contain infobox without id attribute");
+        //     }
+        // }
+    }
+
+    public void demoOutput() {
+        String filePathOutput = "database/demoOutput.txt";
+        String filePath = "./database/NhanVat.json";
+
+        //  Input from JSON back to Objects
+        ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
+        try (FileReader reader = new FileReader(filePath);
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
+
+            // Read the JSON string from the file
+            StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+            String jsonString = jsonBuilder.toString();
+
+            // Use Gson to deserialize the JSON string into an ArrayList<NhanVatModel>
+            Gson gson = new GsonBuilder().create();
+            nhanVatList = gson.fromJson(jsonString, new TypeToken<ArrayList<NhanVatModel>>() {}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String content = "";
+        for (NhanVatModel nhanVat : nhanVatList) {
+            content += nhanVat.toString() + "\n\n";
+        }
+
+        try (FileWriter writer = new FileWriter(filePathOutput)) {
+            // Write the JSON string to the file
+            writer.write(content);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) {
         NhanVatCrawler test = new NhanVatCrawler();
-        test.crawlWiki();
+        test.demoOutput();
     }
 }

@@ -84,4 +84,25 @@ public class NhanVatModel extends Model {
     public void addRelative(Relative relative){
         relatives.add(relative);
     }
+
+    public String toString() {
+        String outputString = "name= \"" + name + '\"' +
+                            "\ncode= \"" + code + '\"';
+
+        outputString += "\ntable = ";
+        for (Pair p : table)  {
+            outputString += "\n"+ p.toString();
+        }
+
+        outputString += "\ndescription = ";
+        for (String text : description)  {
+            outputString += "\n   \"" + text + "\"";
+        }
+
+        outputString += "\nrelatives = ";
+        for (Relative r : relatives)  {
+            outputString += "\n"+ r.toString();
+        }
+        return outputString;
+    }
 }

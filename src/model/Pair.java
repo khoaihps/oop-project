@@ -29,4 +29,13 @@ public class Pair {
     public void setInfo(ArrayList<String> info) {
         this.info = info;
     }
+
+    public String toString() {
+        String outputString = new String();
+        outputString += "   label = \"" + label + '\"';
+        for (String text : info)  {
+            outputString += "\n      info = \"" + text + '\"';
+        }
+        return outputString;
+    }
 }

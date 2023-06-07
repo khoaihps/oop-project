@@ -39,4 +39,9 @@ public class Relative {
         return Objects.hash(text, href);
     }
 
+    public String toString() {
+        String outputString = "   text= \"" + text + '\"' +
+                            "\n   href= \"" + href + '\"' ;
+        return outputString;
+    }
 }
