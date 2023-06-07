@@ -4,6 +4,9 @@ import model.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 
 import org.jsoup.Jsoup;
@@ -22,7 +25,9 @@ import java.util.Comparator;
 
 
 public class NhanVatCrawler {
-    public void crawl() {
+
+    void 
+    public void crawlNguoiKeSu() {
         String baseUrl = "https://nguoikesu.com";
         String nhanVatUrl = "/nhan-vat/an-duong-vuong";
         Document doc;
@@ -38,7 +43,7 @@ public class NhanVatCrawler {
             }
             
             // Collect data
-            String name = doc.select("h2[itemprop=headline]").text();
+            String name = doc.selectFirst("div.page-header > h2").text();
             NhanVatModel nhanVat = new NhanVatModel(name);
             nhanVat.setCode(nhanVatUrl);
 
@@ -147,8 +152,45 @@ public class NhanVatCrawler {
         }
     }
 
+    public void crawlWiki()  {
+        String filePath = "./database/NhanVat.json";
+        ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
+
+        try (FileReader reader = new FileReader(filePath);
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
+
+            // Read the JSON string from the file
+            StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+            String jsonString = jsonBuilder.toString();
+
+            // Use Gson to deserialize the JSON string into an ArrayList<NhanVatModel>
+            Gson gson = new GsonBuilder().create();
+            nhanVatList = gson.fromJson(jsonString, new TypeToken<ArrayList<NhanVatModel>>() {}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+                    
+        String baseUrl = "https://vi.wikipedia.org/wiki/";
+        String nhanVatUrl = "";
+        Document doc;
+
+        // Process the deserialized ArrayList<NhanVatModel> as needed
+        for (NhanVatModel nhanVat : nhanVatList) {
+            nhanVatUrl = nhanVat.getName().replace(" ", "_");
+            try {
+                doc =  Jsoup.connect(baseUrl+nhanVatUrl).get();
+            } catch (IOException e ){
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         NhanVatCrawler test = new NhanVatCrawler();
-        test.crawl();
+        test.crawlWiki();
     }
 }
