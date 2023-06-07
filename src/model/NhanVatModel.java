@@ -5,33 +5,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class NhanVatModel extends Model {
-    public String code;
-    protected ArrayList<String> birth, death;
-    public ArrayList<Pair> table;
-    protected ArrayList<String> description;
-    private Set<Relative> relatives;
-    
-    // private ArrayList<Relative> relatives;
+    private String code;
+    private ArrayList<ArrayList<String>> infobox;
+    private ArrayList<String> description;
+    private Set<String> nhanVatLienQuan;
+    private Set<String> diaDanhLienQuan;
+    private Set<String> thoiKyLienQuan;
+
 
     public NhanVatModel(String name) {
         super(name);
         this.code = new String();
-        this.birth = new ArrayList<>();
-        this.death = new ArrayList<>();
-        this.table = new ArrayList<>();
+        this.infobox = new ArrayList<>();
         this.description = new ArrayList<>();
-        this.relatives = new HashSet<>();
+        this.nhanVatLienQuan = new HashSet<>();
+        this.diaDanhLienQuan = new HashSet<>();
+        this.thoiKyLienQuan = new HashSet<>();
     }
-
-
-    // public NhanVatModel() {
-    //     this.code = new String;
-    //     this.birth = new ArrayList<>()
-    //     this.death = new ArrayList<>();
-    //     this.table = new ArrayList<>();
-    //     this.description = new ArrayList<>();
-    //     this.relatives = new ArrayList<>();
-    // }
 
     public String getCode() {
         return code;
@@ -41,28 +31,12 @@ public class NhanVatModel extends Model {
         this.code = code;
     }
 
-    public ArrayList<String> getBirth() {
-        return birth;
+    public ArrayList<ArrayList<String>> getInfobox() {
+        return infobox;
     }
 
-    public void setBirth(ArrayList<String> birth) {
-        this.birth = birth;
-    }
-
-    public ArrayList<String> getDeath() {
-        return death;
-    }
-
-    public void setDeath(ArrayList<String> death) {
-        this.death = death;
-    }
-
-    public ArrayList<Pair> getTable() {
-        return table;
-    }
-
-    public void setTable(ArrayList<Pair> table) {
-        this.table = table;
+    public void setInfobox(ArrayList<ArrayList<String>> infobox) {
+        this.infobox = infobox;
     }
 
     public ArrayList<String> getDescription() {
@@ -73,36 +47,105 @@ public class NhanVatModel extends Model {
         this.description = description;
     }
 
-    public Set<Relative> getRelatives() {
-        return relatives;
+    public Set<String> getNhanVatLienQuan() {
+        return nhanVatLienQuan;
     }
 
-    public void setRelatives(Set<Relative> relatives) {
-        this.relatives = relatives;
+    public void setNhanVatLienQuan(Set<String> nhanVatLienQuan) {
+        this.nhanVatLienQuan = nhanVatLienQuan;
     }
 
-    public void addRelative(Relative relative){
-        relatives.add(relative);
+    public Set<String> getDiaDanhLienQuan() {
+        return diaDanhLienQuan;
     }
 
-    public String toString() {
-        String outputString = "name= \"" + name + '\"' +
-                            "\ncode= \"" + code + '\"';
+    public void setDiaDanhLienQuan(Set<String> diaDanhLienQuan) {
+        this.diaDanhLienQuan = diaDanhLienQuan;
+    }
 
-        outputString += "\ntable = ";
-        for (Pair p : table)  {
-            outputString += "\n"+ p.toString();
+    public Set<String> getThoiKyLienQuan() {
+        return thoiKyLienQuan;
+    }
+
+    public void setThoiKyLienQuan(Set<String> thoiKyLienQuan) {
+        this.thoiKyLienQuan = thoiKyLienQuan;
+    }
+
+    public String toHtml() {
+        StringBuilder htmlBuilder = new StringBuilder();
+
+        // Start the HTML structure
+        htmlBuilder.append("<html>");
+        htmlBuilder.append("<head>");
+        htmlBuilder.append("<meta charset=\"UTF-8\">");
+        htmlBuilder.append("<title>").append(getName()).append("</title>");
+        htmlBuilder.append("<style>");
+        htmlBuilder.append("body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif;font-size:14px; }");
+        htmlBuilder.append("table { font-family:'lucida grande', tahoma, verdana, arial, sans-serif;font-size:14px; }");
+        htmlBuilder.append(".table-container { text-align: left; }");
+        htmlBuilder.append("</style>");
+        htmlBuilder.append("</head>");
+        htmlBuilder.append("<body>");
+
+        // Add the name as a heading
+        htmlBuilder.append("<h1>").append("NHÂN VẬT").append("</h1>");
+        htmlBuilder.append("<h1>").append(getName()).append("</h1>");
+
+        // Add the code
+        // htmlBuilder.append("<p><strong>Code:</strong> ").append(getCode()).append("</p>");
+
+        // Add the infobox
+        htmlBuilder.append("<h2>Thông tin nhân vật</h2>");
+        htmlBuilder.append("<table class=\"table-container\">");
+        for (ArrayList<String> info : getInfobox()) {
+            htmlBuilder.append("<tr>");
+            if (info.size() == 1) htmlBuilder.append("<th colspan=\"2\">");
+            else htmlBuilder.append("<th scope=\"row\">");
+            htmlBuilder.append(info.get(0)).append("</th>");
+            htmlBuilder.append("<td>");
+            for (int i = 1; i < info.size(); i++) {
+                if (i > 1) htmlBuilder.append("<br>");
+                htmlBuilder.append(info.get(i));
+            }
+            htmlBuilder.append("</td>");
+            htmlBuilder.append("</tr>");
+        }
+        htmlBuilder.append("</table>");
+
+        // Add the description
+        htmlBuilder.append("<h2>Description</h2>");
+        for (String desc : getDescription()) {
+            htmlBuilder.append("<p>").append(desc).append("</p>");
         }
 
-        outputString += "\ndescription = ";
-        for (String text : description)  {
-            outputString += "\n   \"" + text + "\"";
+        // Add the related figures
+        htmlBuilder.append("<h2>Related Figures</h2>");
+        htmlBuilder.append("<ul>");
+        for (String figure : getNhanVatLienQuan()) {
+            htmlBuilder.append("<li>").append(figure).append("</li>");
         }
+        htmlBuilder.append("</ul>");
 
-        outputString += "\nrelatives = ";
-        for (Relative r : relatives)  {
-            outputString += "\n"+ r.toString();
+        // Add the related places
+        htmlBuilder.append("<h2>Related Places</h2>");
+        htmlBuilder.append("<ul>");
+        for (String place : getDiaDanhLienQuan()) {
+            htmlBuilder.append("<li>").append(place).append("</li>");
         }
-        return outputString;
+        htmlBuilder.append("</ul>");
+
+        // Add the related time periods
+        htmlBuilder.append("<h2>Related Time Periods</h2>");
+        htmlBuilder.append("<ul>");
+        for (String timePeriod : getThoiKyLienQuan()) {
+            htmlBuilder.append("<li>").append(timePeriod).append("</li>");
+        }
+        htmlBuilder.append("</ul>");
+
+        // Close the HTML structure
+        htmlBuilder.append("</body>");
+        htmlBuilder.append("</html>");
+
+        return htmlBuilder.toString();
     }
 }

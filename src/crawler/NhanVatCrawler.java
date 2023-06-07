@@ -41,24 +41,30 @@ public class NhanVatCrawler {
                 throw new RuntimeException(e);
             }
             
-            // Collect data
+            // Collecting data
             String name = doc.selectFirst("div.page-header > h2").text();
             NhanVatModel nhanVat = new NhanVatModel(name);
-            nhanVat.setCode(nhanVatUrl);
+
+            int lastSlashIndex = nhanVatUrl.lastIndexOf("/");   // Get the text after last slash of url as nhanVatCode
+            String nhanVatCode = nhanVatUrl.substring(lastSlashIndex + 1);
+            nhanVat.setCode(nhanVatCode);
 
             // Get table
-            ArrayList<String> info = new ArrayList<String>();
+            
             Element table = doc.selectFirst("table.infobox"); // select the table element with class "infobox"
             if (table != null) {
                 // Map<String, ArrayList<String>> infoMap = new HashMap<String, ArrayList<String>>();
                 Elements rows = table.select("tr");
                 for (Element row : rows) {
-                    String label = row.select("th[scope=row]").text();
+                    String label = row.select("th").text();
                     if (label.isEmpty()) {
                         continue; 
                     } 
 
-                    info = new ArrayList<>();
+                    ArrayList<String> info = new ArrayList<String>();
+                    info.add(label);   // Set info[0] as label
+
+                    //  Add information to info[1..]
                     Elements liElements = row.select("td li");
                     if (liElements.size() > 0) {
                         // if there are li elements, get their text and concatenate with line breaks
@@ -75,20 +81,17 @@ public class NhanVatCrawler {
                             for (String line : lines) {
                                 info.add(Jsoup.parse(line).text());
                             } 
-                        } else info.add(row.select("td").text());
+                        } else {
+                            Element tdElement = row.selectFirst("td");
+                            if (tdElement != null) info.add(row.select("td").text());
+                        }
                     }
-                    if (label.equals("Sinh")) {
-                        nhanVat.setBirth(info);
-                    } else
-                    if (label.equals("Mất")) {
-                        nhanVat.setDeath(info);
-                    } else
-                    nhanVat.table.add(new Pair(label,info));
+                    nhanVat.getInfobox().add(info);
                 }
             }
 
             //  Scrape description
-            info = new ArrayList<>();
+            ArrayList<String> info = new ArrayList<String>();
             Element firstPTag = doc.selectFirst("p");
             if (firstPTag != null)  {
                 String text = firstPTag.wholeText();
@@ -103,18 +106,25 @@ public class NhanVatCrawler {
             }
 
             //  Search for relative figures
-            Set<Relative> hrefSet = new HashSet<>();
+            Set<String> nhanVatLienQuan = new HashSet<>();
+            Set<String> diaDanhLienQuan = new HashSet<>();
+            Set<String> thoiKyLienQuan = new HashSet<>();;
             Elements aTags = doc.select("div[itemprop=articleBody].com-content-article__body a");
             for (Element aTag : aTags) {
-                String text = aTag.text();
                 String href = aTag.attr("href");
-                // Relative relative = new Relative(text,href);
-                if (!href.isEmpty() && !href.startsWith("#")) {
-                    hrefSet.add(new Relative(text,href));
+                if (href.isEmpty() || href.startsWith("#")) continue;
+                String code = href.substring(href.lastIndexOf("/") + 1);
+                if (href.contains("nhan-vat")) {
+                    nhanVatLienQuan.add(code);
+                } else if (href.contains("dia-danh")) {
+                    diaDanhLienQuan.add(code);
+                } else if (href.contains("dong-lich-su")) {
+                    thoiKyLienQuan.add(code);
                 }
             }
-            nhanVat.setRelatives(hrefSet);
-
+            nhanVat.setNhanVatLienQuan(nhanVatLienQuan);
+            nhanVat.setDiaDanhLienQuan(diaDanhLienQuan);
+            nhanVat.setThoiKyLienQuan(thoiKyLienQuan);
 
             // Add scapred nhanvat to list
             nhanVatList.add(nhanVat);
@@ -129,6 +139,7 @@ public class NhanVatCrawler {
             }
         }
 
+        //  Sorting the list by code
         Collections.sort(nhanVatList, new Comparator<NhanVatModel>() {
             public int compare(NhanVatModel nv1, NhanVatModel nv2) {
                 return nv1.getCode().compareTo(nv2.getCode());
@@ -137,12 +148,9 @@ public class NhanVatCrawler {
         
         // Write to JSON file
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
         String json = gson.toJson(nhanVatList);
-
         // Specify the file path and name
         String filePath = "./database/NhanVat.json";
-
         try (FileWriter writer = new FileWriter(filePath)) {
             // Write the JSON string to the file
             writer.write(json);
@@ -157,8 +165,7 @@ public class NhanVatCrawler {
         //  Input from JSON back to Objects
         ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
         try (FileReader reader = new FileReader(filePath);
-             BufferedReader bufferedReader = new BufferedReader(reader)) {
-
+            BufferedReader bufferedReader = new BufferedReader(reader)) {
             // Read the JSON string from the file
             StringBuilder jsonBuilder = new StringBuilder();
             String line;
@@ -171,11 +178,26 @@ public class NhanVatCrawler {
             Gson gson = new GsonBuilder().create();
             nhanVatList = gson.fromJson(jsonString, new TypeToken<ArrayList<NhanVatModel>>() {}.getType());
         } catch (IOException e) {
-            e.printStackTrace();
+                e.printStackTrace();
         }
-            
+        
+
+        String targetCode = "vu-duc-dam";
+        NhanVatModel targetNhanVat = null;
+
         for (NhanVatModel nhanVat : nhanVatList) {
-            System.out.println(nhanVat.toString() + '\n');
+            if (nhanVat.getCode().equals(targetCode)) {
+                targetNhanVat = nhanVat;
+                break; // Exit the loop once the target is found
+            }
+        }
+        String html = targetNhanVat.toHtml();
+        String filePathOutput = "./htmlOutput/NhanVat.html";
+        try (FileWriter writer = new FileWriter(filePathOutput)) {
+            // Write the JSON string to the file
+            writer.write(html);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // String baseUrl = "https://vi.wikipedia.org/wiki/";
@@ -199,46 +221,9 @@ public class NhanVatCrawler {
         // }
     }
 
-    public void demoOutput() {
-        String filePathOutput = "database/demoOutput.txt";
-        String filePath = "./database/NhanVat.json";
-
-        //  Input from JSON back to Objects
-        ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
-        try (FileReader reader = new FileReader(filePath);
-             BufferedReader bufferedReader = new BufferedReader(reader)) {
-
-            // Read the JSON string from the file
-            StringBuilder jsonBuilder = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                jsonBuilder.append(line);
-            }
-            String jsonString = jsonBuilder.toString();
-
-            // Use Gson to deserialize the JSON string into an ArrayList<NhanVatModel>
-            Gson gson = new GsonBuilder().create();
-            nhanVatList = gson.fromJson(jsonString, new TypeToken<ArrayList<NhanVatModel>>() {}.getType());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        String content = "";
-        for (NhanVatModel nhanVat : nhanVatList) {
-            content += nhanVat.toString() + "\n\n";
-        }
-
-        try (FileWriter writer = new FileWriter(filePathOutput)) {
-            // Write the JSON string to the file
-            writer.write(content);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
     public static void main(String[] args) {
         NhanVatCrawler test = new NhanVatCrawler();
-        test.demoOutput();
+        test.crawlNguoiKeSu();
+        test.crawlWiki();
     }
 }
