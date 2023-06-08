@@ -1,10 +1,10 @@
 package crawler;
 
+import util.*;
 import model.*;
 import org.jsoup.Jsoup;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import java.io.FileWriter;
 
 import org.jsoup.nodes.Document;
@@ -13,7 +13,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 
@@ -21,7 +20,7 @@ public class ThoiKyCrawler {
     public void crawl() {
         String baseUrl = "https://nguoikesu.com";
         String thoiKyUrl = "/dong-lich-su";
-        List<ThoiKyModel> thoiKyList = new ArrayList<>();
+        ArrayList<ThoiKyModel> thoiKyList = new ArrayList<>();
         Document doc;
         try {
             doc = Jsoup.connect(baseUrl+thoiKyUrl).get();
@@ -101,16 +100,8 @@ public class ThoiKyCrawler {
         }
 
         // Write to JSON file
-        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-        String json = gson.toJson(thoiKyList);
-        // Specify the file path and name
-        String filePath = "./database/ThoiKy.json";
-        try (FileWriter writer = new FileWriter(filePath)) {
-            // Write the JSON string to the file
-            writer.write(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Utility.writer(Config.THOI_KY_FILENAME, thoiKyList);
+
     }
 
     // Lay thong tin nhan vat tu trang gom nhieu trang con
@@ -141,11 +132,26 @@ public class ThoiKyCrawler {
         return hrefs;
     }
 
+    public void outputTxt () {
+        ArrayList<ThoiKyModel> thoiKyList = Utility.loader(Config.THOI_KY_FILENAME, new TypeToken<ArrayList<ThoiKyModel>>() {});
+        StringBuilder stringBuilder = new StringBuilder();
+        for (ThoiKyModel thoiKy : thoiKyList) {
+            stringBuilder.append(Utility.removeAccentsAndToLowercase(thoiKy.getName())).append(thoiKy.toHtml()).append("\n");
+        }
+        String filePathOutput = "txtOutput/ThoiKy.txt";
+        String outputTxt = stringBuilder.toString();
+        try (FileWriter writer = new FileWriter(filePathOutput)) {
+            writer.write(outputTxt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     // Testing
     public static void main(String[] args) {
         ThoiKyCrawler test = new ThoiKyCrawler();
-        test.crawl();
+        // test.crawl();
+        test.outputTxt();
     }
 
 }

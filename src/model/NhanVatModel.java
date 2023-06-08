@@ -77,19 +77,22 @@ public class NhanVatModel extends Model {
         // Start the HTML structure
         htmlBuilder.append("<html>");
         htmlBuilder.append("<head>");
+        htmlBuilder.append("</head>");
+        htmlBuilder.append("<body contenteditable=\"true\">");
+        htmlBuilder.append("<i>").append(getName()).append("</i>");
         htmlBuilder.append("<meta charset=\"UTF-8\">");
-        htmlBuilder.append("<title>").append(getName()).append("</title>");
+        // htmlBuilder.append("<title>").append(getName()).append("</title>");
         htmlBuilder.append("<style>");
         htmlBuilder.append("body { font-family:'lucida grande', tahoma, verdana, arial, sans-serif;font-size:14px; }");
         htmlBuilder.append("table { font-family:'lucida grande', tahoma, verdana, arial, sans-serif;font-size:14px; }");
         htmlBuilder.append(".table-container { text-align: left; }");
         htmlBuilder.append("</style>");
-        htmlBuilder.append("</head>");
-        htmlBuilder.append("<body>");
+        
+        
 
         // Add the name as a heading
-        htmlBuilder.append("<h1>").append("NHÂN VẬT").append("</h1>");
-        htmlBuilder.append("<h1>").append(getName()).append("</h1>");
+        // htmlBuilder.append("<h1>").append("NHÂN VẬT").append("</h1>");
+        // htmlBuilder.append("<h1>").append(getName()).append("</h1>");
 
         // Add the code
         // htmlBuilder.append("<p><strong>Code:</strong> ").append(getCode()).append("</p>");
