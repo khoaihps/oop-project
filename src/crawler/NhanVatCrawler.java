@@ -9,6 +9,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 
+import java.text.Normalizer;
+import java.util.regex.Pattern;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,6 +28,14 @@ import java.util.Comparator;
 
 
 public class NhanVatCrawler {
+
+    public static String removeAccentsAndToLowercase(String text) {
+        String normalizedText = Normalizer.normalize(text, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        String withoutAccents = pattern.matcher(normalizedText).replaceAll("");
+        String replacedText = withoutAccents.replace("đ", "d").replace("Đ", "D");
+        return replacedText.toLowerCase();
+    }
 
     public void crawlNguoiKeSu() {
         String baseUrl = "https://nguoikesu.com";
@@ -160,45 +171,27 @@ public class NhanVatCrawler {
     }
 
     public void crawlWiki()  {
-        String filePath = "./database/NhanVat.json";
 
         //  Input from JSON back to Objects
-        ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
-        try (FileReader reader = new FileReader(filePath);
-            BufferedReader bufferedReader = new BufferedReader(reader)) {
-            // Read the JSON string from the file
-            StringBuilder jsonBuilder = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                jsonBuilder.append(line);
-            }
-            String jsonString = jsonBuilder.toString();
-
-            // Use Gson to deserialize the JSON string into an ArrayList<NhanVatModel>
-            Gson gson = new GsonBuilder().create();
-            nhanVatList = gson.fromJson(jsonString, new TypeToken<ArrayList<NhanVatModel>>() {}.getType());
-        } catch (IOException e) {
-                e.printStackTrace();
-        }
+        ArrayList<NhanVatModel> nhanVatList = loader("./database/NhanVat.json");
         
-
         String targetCode = "vu-duc-dam";
         NhanVatModel targetNhanVat = null;
 
-        for (NhanVatModel nhanVat : nhanVatList) {
-            if (nhanVat.getCode().equals(targetCode)) {
-                targetNhanVat = nhanVat;
-                break; // Exit the loop once the target is found
-            }
-        }
-        String html = targetNhanVat.toHtml();
-        String filePathOutput = "./htmlOutput/NhanVat.html";
-        try (FileWriter writer = new FileWriter(filePathOutput)) {
-            // Write the JSON string to the file
-            writer.write(html);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // for (NhanVatModel nhanVat : nhanVatList) {
+        //     if (nhanVat.getCode().equals(targetCode)) {
+        //         targetNhanVat = nhanVat;
+        //         break; // Exit the loop once the target is found
+        //     }
+        // }
+        // String html = targetNhanVat.toHtml();
+        // String filePathOutput = "./htmlOutput/NhanVat.html";
+        // try (FileWriter writer = new FileWriter(filePathOutput)) {
+        //     // Write the JSON string to the file
+        //     writer.write(html);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
 
         // String baseUrl = "https://vi.wikipedia.org/wiki/";
         // String nhanVatUrl = "";
@@ -221,9 +214,47 @@ public class NhanVatCrawler {
         // }
     }
 
+    public static ArrayList<NhanVatModel> loader(String filePath) {
+        ArrayList<NhanVatModel> nhanVatList = new ArrayList<>();
+        try (FileReader reader = new FileReader(filePath);
+            BufferedReader bufferedReader = new BufferedReader(reader)) {
+            // Read the JSON string from the file
+            StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+            String jsonString = jsonBuilder.toString();
+
+            // Use Gson to deserialize the JSON string into an ArrayList<NhanVatModel>
+            Gson gson = new GsonBuilder().create();
+            nhanVatList = gson.fromJson(jsonString, new TypeToken<ArrayList<NhanVatModel>>() {}.getType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return nhanVatList;
+    }
+
+    public void outputTxt () {
+        ArrayList<NhanVatModel> nhanVatList = loader("./database/NhanVat.json");
+        StringBuilder stringBuilder = new StringBuilder();
+        for (NhanVatModel nhanVat : nhanVatList) {
+            stringBuilder.append(removeAccentsAndToLowercase(nhanVat.getName())).append("\n").append(nhanVat.toHtml()).append("\n\n");
+        }
+        String filePathOutput = "./txtOutput/NhanVat.txt";
+        String outputTxt = stringBuilder.toString();
+        try (FileWriter writer = new FileWriter(filePathOutput)) {
+            // Write the JSON string to the file
+            writer.write(outputTxt);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         NhanVatCrawler test = new NhanVatCrawler();
-        test.crawlNguoiKeSu();
+        // test.crawlNguoiKeSu();
         test.crawlWiki();
+        test.outputTxt();
     }
 }
