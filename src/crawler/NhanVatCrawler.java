@@ -175,8 +175,8 @@ public class NhanVatCrawler {
         //  Input from JSON back to Objects
         ArrayList<NhanVatModel> nhanVatList = loader("./database/NhanVat.json");
         
-        String targetCode = "vu-duc-dam";
-        NhanVatModel targetNhanVat = null;
+        // String targetCode = "vu-duc-dam";
+        // NhanVatModel targetNhanVat = null;
 
         // for (NhanVatModel nhanVat : nhanVatList) {
         //     if (nhanVat.getCode().equals(targetCode)) {

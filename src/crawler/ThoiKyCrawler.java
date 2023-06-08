@@ -3,6 +3,10 @@ package crawler;
 import model.*;
 import org.jsoup.Jsoup;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.io.FileWriter;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -78,16 +82,15 @@ public class ThoiKyCrawler {
             Set<String> diaDanhLienQuan = new HashSet<>();
             //  Traverse all links to find relative figures
             for (String link : links) {
+                System.out.println(baseUrl+link);
                 ArrayList<String> hrefs = getRelatives(baseUrl+link);
-                System.out.println(link);
+
                 for (String href : hrefs) {
                     String code = href.substring(href.lastIndexOf("/") + 1);
                     if (href.contains("nhan-vat")) {
                         nhanVatLienQuan.add(code);
                     } else if (href.contains("dia-danh")) {
                         diaDanhLienQuan.add(code);
-                    } else if (href.contains("dong-lich-su")) {
-                        System.out.println("Mu");
                     }
                 }
             }
@@ -95,6 +98,18 @@ public class ThoiKyCrawler {
             thoiKy.setNhanVatLienQuan(nhanVatLienQuan);
             thoiKy.setDiaDanhLienQuan(diaDanhLienQuan);
             thoiKyList.add(thoiKy);
+        }
+
+        // Write to JSON file
+        Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+        String json = gson.toJson(thoiKyList);
+        // Specify the file path and name
+        String filePath = "./database/ThoiKy.json";
+        try (FileWriter writer = new FileWriter(filePath)) {
+            // Write the JSON string to the file
+            writer.write(json);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -109,11 +124,14 @@ public class ThoiKyCrawler {
         }
 
         //  Find in article body
-        Elements aTags = doc.selectFirst("div[itemprop=articleBody]").select("a");
-        for (Element aTag : aTags) {
-            String href = aTag.attr("href");
-            if (href.isEmpty() || href.startsWith("#")) continue;
-            hrefs.add(href);
+        Element articleBody = doc.selectFirst("div[itemprop=articleBody]");
+        if (articleBody != null) {
+            Elements aTags = doc.selectFirst("div[itemprop=articleBody]").select("a");
+            for (Element aTag : aTags) {
+                String href = aTag.attr("href");
+                if (href.isEmpty() || href.startsWith("#")) continue;
+                hrefs.add(href);
+            }
         }
 
         //  Find in article sidebar
