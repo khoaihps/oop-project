@@ -55,10 +55,10 @@ public class ThoiKyModel extends Model{
 
         // Start the HTML structure
         htmlBuilder.append("<html>");
+        htmlBuilder.append("<i>").append(getName()).append("</i>");
         htmlBuilder.append("<head>");
         htmlBuilder.append("</head>");
         htmlBuilder.append("<body contenteditable=\"true\">");
-        htmlBuilder.append("<i>").append(getName()).append("</i>");
         htmlBuilder.append("<meta charset=\"UTF-8\">");
         // htmlBuilder.append("<title>").append(getName()).append("</title>");
         htmlBuilder.append("<style>");
