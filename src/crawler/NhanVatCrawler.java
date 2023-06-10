@@ -54,11 +54,18 @@ public class NhanVatCrawler {
                 Elements rows = table.select("tr");
                 for (Element row : rows) {
                     String label = row.select("th[scope=row], th[colspan=2]").text();
+                    ArrayList<String> info = new ArrayList<String>();
                     if (label.isEmpty()) {
+                        Elements case2td = row.select("td");
+                        if (case2td.size() == 2) {
+                            for (Element td : case2td) {
+                                info.add(td.text());
+                            }
+                            nhanVat.getInfobox().add(info);
+                        }  
                         continue; 
                     } 
 
-                    ArrayList<String> info = new ArrayList<String>();
                     info.add(label);   // Set info[0] as label
 
                     //  Add information to info[1..]
@@ -216,7 +223,7 @@ public class NhanVatCrawler {
 
     public static void main(String[] args) {
         NhanVatCrawler test = new NhanVatCrawler();
-        // test.crawlNguoiKeSu();
+        test.crawlNguoiKeSu();
         // test.crawlWiki();
         test.outputTxt();
     }
